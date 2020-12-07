@@ -7,7 +7,15 @@
 
 int main(int argc, char **argv) {
     CAMERA_INSTANCE camera_instance;
-    int res = arducam_init_camera(&camera_instance);
+    struct camera_interface cam_interface = {
+        .i2c_bus = 0,           // /dev/i2c-0  or /dev/i2c-1   
+        .camera_num = 0,        // mipi interface num
+        .sda_pins = {28, 0},    // enable sda_pins[camera_num], disable sda_pins[camera_num ? 0 : 1]
+        .scl_pins = {29, 1},    // enable scl_pins[camera_num], disable scl_pins[camera_num ? 0 : 1]
+        .shutdown_pins ={31, 3},
+        .led_pins = {30, 2},
+    };
+    int res = arducam_init_camera2(&camera_instance,cam_interface);
     if (res) {
         LOG("init camera status = %d", res);
         return -1;
